@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain:mule-domain
+		xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+		xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	    xmlns="http://www.mulesoft.org/schema/mule/core"
+        xmlns:domain="http://www.mulesoft.org/schema/mule/ee/domain"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+        xsi:schemaLocation="
+				http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+				http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+				http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+				http://www.mulesoft.org/schema/mule/ee/domain http://www.mulesoft.org/schema/mule/ee/domain/current/mule-domain-ee.xsd">
+
+    <configuration-properties file="config.properties"/>
+
+    <http:listener-config name="api-proxy-listener-http">
+        <http:listener-connection host="0.0.0.0" port="${proxy.port}" protocol="HTTP"/>
+    </http:listener-config>
+	
+	<http:listener-config
+		name="api-proxy-listener-secure-https" doc:name="HTTPS Listener config">
+		<http:listener-connection host="0.0.0.0"
+			port="${https.port}" tlsContext="TLS_Context" protocol="HTTPS" />
+	</http:listener-config>
+	
+	<tls:context name="TLS_Context" doc:name="TLS Context" doc:id="76524961-7ea9-4640-af84-45d0c8be22c2">
+		<!--<tls:trust-store path="cacerts" password="changeit" insecure="true"/> -->
+		<tls:key-store type="${keystore.type}" path="${keystore.location}"
+			alias="${key.alias}" keyPassword="${key.password}" password="${keystore.password}"/> 
+	</tls:context>
+	
+
+    <!-- If you want to use HTTPS for inbound communications you must include the following tls namespace and schemaLocation
+
+    xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+    http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+    -->
+
+    <!-- This is an example configuration for HTTPS inbound configuration.  
+
+    <http:listener-config name="api-proxy-listener-https">
+        <http:listener-connection host="0.0.0.0" port="${proxy.port}" tlsContext="inbound-tls-context" protocol="HTTPS"/>
+    </http:listener-config>
+
+    <tls:context name="inbound-tls-context">
+        <tls:key-store path="${inbound.keystore.path}" 
+                       keyPassword="${inbound.keystore.keyPassword}" 
+                       password="${inbound.keystore.password}"
+                       algorithm="${inbound.keystore.algorithm}" 
+                       type="${inbound.keystore.type}"  
+                       alias="${inbound.keystore.alias}"/>
+    </tls:context>
+    -->
+</domain:mule-domain>
